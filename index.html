@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sillon : tracker d’habitudes gratuit et simple</title>
+<meta name="description" content="Sillon est un tracker d’habitudes gratuit, sans compte : coche tes habitudes chaque jour, suis tes séries et ta progression sur la semaine et le mois.">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Sillon : tracker d’habitudes gratuit et simple">
+<meta property="og:description" content="Coche tes habitudes chaque jour, suis tes séries et ta progression. Gratuit, sans compte.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Sillon","description":"Tracker d’habitudes gratuit et sans compte : séries, statistiques de la semaine et du mois.","applicationCategory":"LifestyleApplication","operatingSystem":"Tous (navigateur web)","inLanguage":"fr","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"}}</script>
+<meta name="theme-color" content="#EEF0F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12161C" media="(prefers-color-scheme: dark)">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF0F3;--surface:#FFFFFF;--ink:#1B2430;--muted:#5F6B7A;--line:#CBD2DB;--accent:#2F6FED;--on-accent:#FFFFFF;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161C;--surface:#1B222B;--ink:#E8ECF2;--muted:#98A4B3;--line:#2D3846;--accent:#5B93FF;--on-accent:#0F1620}}
+:root[data-theme="dark"]{--bg:#12161C;--surface:#1B222B;--ink:#E8ECF2;--muted:#98A4B3;--line:#2D3846;--accent:#5B93FF;--on-accent:#0F1620}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.4}
+main{max-width:520px;margin:0 auto;padding:28px 20px 56px}
+h1{font-size:2.4rem;font-weight:800;letter-spacing:-.03em;margin:0;line-height:1.05}
+.date{color:var(--muted);margin:6px 0 22px;text-transform:capitalize}
+.today{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+.bar{flex:1;height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .3s}
+.count{font-weight:600;white-space:nowrap}
+.add{display:flex;gap:8px;margin-bottom:8px}
+.add input{flex:1;min-width:0;font:inherit;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:12px 14px}
+.add input:focus{outline:none;border-color:var(--ink)}
+.add button{font:inherit;font-weight:600;color:var(--on-accent);background:var(--accent);border:0;border-radius:12px;padding:12px 18px;cursor:pointer}
+.habit{padding:20px 0;border-top:2px solid var(--line)}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px}
+.name{font-size:1.2rem;font-weight:600;overflow-wrap:anywhere}
+.streak{color:var(--muted);white-space:nowrap}
+.streak b{color:var(--ink)}
+.stat{color:var(--muted);font-size:.85rem;margin:12px 0 0}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;padding:0;font:inherit;color:var(--muted);font-size:.8rem;cursor:pointer}
+.dot{width:100%;max-width:44px;aspect-ratio:1;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;transition:background .15s,transform .15s}
+.day[aria-pressed="true"] .dot{background:var(--accent);border-color:var(--accent)}
+.day[aria-pressed="true"] .dot::after{content:"";width:34%;height:18%;border-left:3px solid var(--on-accent);border-bottom:3px solid var(--on-accent);transform:translateY(-12%) rotate(-45deg)}
+.day.now .dot{border-color:var(--ink)}
+.day.now{color:var(--ink);font-weight:600}
+.day:active .dot{transform:scale(.92)}
+.del{margin-top:12px;background:none;border:0;padding:0;font:inherit;font-size:.85rem;color:var(--muted);text-decoration:underline;cursor:pointer}
+.del.sure{color:#C2412D;font-weight:600}
+.empty{color:var(--muted);padding:24px 0 12px;border-top:2px solid var(--line)}
+.tag{color:var(--muted);margin:8px 0 0;font-size:1.05rem}
+.tabs{display:flex;gap:4px;padding:4px;margin:14px 0 6px;background:var(--line);border-radius:12px}
+.tab{flex:1;font:inherit;font-weight:600;color:var(--muted);background:none;border:0;border-radius:9px;padding:9px;cursor:pointer}
+.tab[aria-pressed="true"]{background:var(--surface);color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:8px}
+.chip{font:inherit;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:99px;padding:8px 14px;cursor:pointer}
+.chip:active{border-color:var(--accent)}
+.sum{display:flex;gap:32px;padding:20px 0 6px;border-top:2px solid var(--line)}
+.sum b{display:block;font-size:2rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+.sum span{color:var(--muted);font-size:.9rem}
+.mhead,.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.mhead{color:var(--muted);font-size:.8rem;text-align:center;margin:14px 0 6px}
+.cell{aspect-ratio:1;border-radius:8px;display:grid;place-items:center;font-size:.75rem;font-style:normal;background:var(--line);color:var(--muted)}
+@supports (background:color-mix(in srgb,red 50%,blue)){.cell{background:color-mix(in srgb,var(--accent) calc(var(--r,0)*100%),var(--line))}}
+.cell.hi{color:var(--on-accent)}
+.cell.now{outline:2px solid var(--ink);outline-offset:1px}
+.cell.off{background:none;border:2px dashed var(--line);opacity:.5}
+.rates{margin-top:22px}
+.foot{margin-top:36px;padding-top:18px;border-top:2px solid var(--line);color:var(--muted);font-size:.85rem}
+.foot summary{cursor:pointer;color:var(--ink);font-weight:600;margin-top:10px}
+.foot textarea{width:100%;font:inherit;font-size:.8rem;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:10px;margin:8px 0}
+.rate{display:grid;grid-template-columns:1fr auto;gap:8px 12px;padding:14px 0;border-top:2px solid var(--line)}
+.rate .bar{grid-column:1/-1}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.about{margin-top:32px;color:var(--muted);font-size:.9rem}
+.about h2{font-size:1rem;color:var(--ink);margin:0 0 6px}
+.about p{margin:0}
+</style>
+</head>
+<body>
+<main>
+<h1>Sillon</h1>
+<p class="tag">Trace ton sillon, jour après jour.</p>
+<p class="date" id="date"></p>
+<div class="today"><div class="bar"><i id="fill"></i></div><span class="count" id="count"></span></div>
+<form class="add" id="form">
+<input id="input" type="text" maxlength="60" placeholder="Nouvelle habitude (ex. Boire de l’eau)" aria-label="Nom de l’habitude" autocomplete="off">
+<button type="submit">Ajouter</button>
+</form>
+<div class="tabs" role="group" aria-label="Affichage"><button class="tab" data-v="week" aria-pressed="true">Semaine</button><button class="tab" data-v="month" aria-pressed="false">Mois</button></div>
+<section id="list"></section>
+<section class="about"><h2>À propos de Sillon</h2><p>Sillon est un tracker d’habitudes gratuit et sans compte. Ajoute tes habitudes (boire de l’eau, lire, marcher, dormir à heure fixe), coche-les chaque jour et regarde ta série de jours d’affilée grandir. La vue Mois affiche ton taux de réussite et tes jours complets. Tes données restent dans ton navigateur : rien n’est envoyé nulle part.</p></section>
+<footer class="foot"><p>Tes habitudes restent sur cet appareil : personne d’autre ne les voit.</p><details><summary>Sauvegarder ou restaurer</summary><p>Copie ce texte pour garder une sauvegarde. Pour restaurer, colle une sauvegarde ici, puis touche Restaurer.</p><textarea id="bk" rows="3" aria-label="Sauvegarde de tes habitudes"></textarea><button id="rs" class="chip">Restaurer</button><p id="msg" role="status"></p></details></footer>
+</main>
+<script>
+var KEY="habitudes-v1", habits=[], pending=null, view="week", SUG=["Boire de l’eau","Marcher 20 minutes","Lire 10 pages","Dormir avant minuit"];
+try{habits=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){habits=[]}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(habits))}catch(e){}}
+function pad(n){return n<10?"0"+n:""+n}
+function fmt(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function esc(s){return s.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function lastDays(){var a=[],i,d;for(i=6;i>=0;i--){d=new Date();d.setDate(d.getDate()-i);a.push(d)}return a}
+function streak(h){var n=0,d=new Date();if(h.done.indexOf(fmt(d))<0)d.setDate(d.getDate()-1);
+while(h.done.indexOf(fmt(d))>=0){n++;d.setDate(d.getDate()-1)}return n}
+function best(h){var a=h.done.slice().sort(),m=0,n=0,i,p,c;for(i=0;i<a.length;i++){c=a[i].split("-");c=new Date(+c[0],+c[1]-1,+c[2]);if(i>0&&Math.round((c-p)/864e5)===1)n++;else n=1;if(n>m)m=n;p=c}return m}
+function monthHtml(){
+var t=new Date(),today=fmt(t),n=habits.length,s=new Date(t.getFullYear(),t.getMonth(),t.getDate()-(t.getDay()+6)%7-28),sk=fmt(s),el=0,tot=0,full=0,g="",i,d,k,c,r;
+for(i=0;i<35;i++){d=new Date(s.getFullYear(),s.getMonth(),s.getDate()+i);k=fmt(d);
+if(k>today){g+='<i class="cell off">'+d.getDate()+'</i>';continue}
+c=habits.filter(function(h){return h.done.indexOf(k)>=0}).length;r=c/n;el++;tot+=c;if(c===n)full++;
+g+='<i class="cell'+(r>=.5?" hi":"")+(k===today?" now":"")+'" style="--r:'+r.toFixed(2)+'">'+d.getDate()+'</i>'}
+var out='<div class="sum"><div><b>'+Math.round(tot/(n*el)*100)+' %</b><span>de réussite</span></div><div><b>'+full+'</b><span>jour'+(full>1?"s":"")+' complet'+(full>1?"s":"")+'</span></div></div>';
+out+='<div class="mhead">'+"LMMJVSD".split("").map(function(l){return"<span>"+l+"</span>"}).join("")+'</div><div class="mgrid">'+g+'</div><div class="rates">';
+habits.forEach(function(h){var m=h.done.filter(function(k){return k>=sk&&k<=today}).length,p=Math.round(m/el*100);
+out+='<div class="rate"><span>'+esc(h.name)+'</span><b>'+p+' %</b><div class="bar"><i style="width:'+p+'%"></i></div></div>'});
+return out+'</div>'}
+function render(){
+var days=lastDays(),today=fmt(new Date()),doneToday=0,html="";
+habits.forEach(function(h,i){
+if(h.done.indexOf(today)>=0)doneToday++;
+var s=streak(h),bs=best(h),wk=days.filter(function(d){return h.done.indexOf(fmt(d))>=0}).length;
+html+='<article class="habit"><div class="top"><span class="name">'+esc(h.name)+'</span><span class="streak"><b>'+s+'</b> jour'+(s>1?"s":"")+' d’affilée</span></div><div class="week">';
+days.forEach(function(d,k){
+var key=fmt(d),on=h.done.indexOf(key)>=0;
+html+='<button class="day'+(k===6?" now":"")+'" data-i="'+i+'" data-d="'+key+'" aria-pressed="'+on+'" aria-label="'+esc(h.name)+', '+d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric"})+'"><span class="dot"></span>'+d.toLocaleDateString("fr-FR",{weekday:"narrow"})+'</button>';
+});
+html+='</div><p class="stat">Cette semaine : '+wk+' sur 7. Record : '+bs+' jour'+(bs>1?"s":"")+'.</p><button class="del'+(pending===i?" sure":"")+'" data-del="'+i+'">'+(pending===i?"Confirmer la suppression":"Supprimer")+'</button></article>';
+});
+if(!habits.length)html='<p class="empty">Bienvenue ! Sillon t’aide à tenir tes habitudes : ajoutes-en une, coche-la chaque jour et regarde ta série grandir. Pour commencer, touche une idée :</p><div class="chips">'+SUG.map(function(x){return'<button class="chip" data-add="'+esc(x)+'">'+esc(x)+'</button>'}).join("")+'</div>';
+else if(view==="month")html=monthHtml();
+document.getElementById("list").innerHTML=html;
+document.getElementById("count").textContent=!habits.length?"":doneToday===habits.length?"Journée complète":doneToday+" sur "+habits.length+" aujourd’hui";
+document.getElementById("fill").style.width=habits.length?Math.round(doneToday/habits.length*100)+"%":"0%";
+document.getElementById("date").textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+document.querySelectorAll(".tab").forEach(function(t){t.setAttribute("aria-pressed",t.getAttribute("data-v")===view)});
+document.getElementById("bk").value=JSON.stringify(habits);
+}
+document.getElementById("form").addEventListener("submit",function(e){
+e.preventDefault();var inp=document.getElementById("input"),v=inp.value.trim();
+if(!v)return;habits.push({name:v,done:[]});inp.value="";pending=null;save();render();
+});
+document.getElementById("list").addEventListener("click",function(e){
+var b=e.target.closest("button");if(!b)return;
+if(b.hasAttribute("data-add")){habits.push({name:b.getAttribute("data-add"),done:[]});save();render();return}
+if(b.hasAttribute("data-del")){var i=+b.getAttribute("data-del");
+if(pending===i){habits.splice(i,1);pending=null;save()}else{pending=i}
+render();return}
+var h=habits[+b.getAttribute("data-i")],k=b.getAttribute("data-d"),p=h.done.indexOf(k);
+if(p>=0)h.done.splice(p,1);else h.done.push(k);
+pending=null;save();render();
+});
+document.querySelector(".tabs").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;view=b.getAttribute("data-v");pending=null;render()});
+document.getElementById("rs").addEventListener("click",function(){var m=document.getElementById("msg");try{var a=JSON.parse(document.getElementById("bk").value);if(!Array.isArray(a)||a.some(function(h){return typeof h.name!=="string"||!Array.isArray(h.done)}))throw 0;habits=a.map(function(h){return{name:h.name.slice(0,60),done:h.done.filter(function(k){return/^\d{4}-\d{2}-\d{2}$/.test(k)})}});save();render();m.textContent="Habitudes restaurées."}catch(e){m.textContent="Sauvegarde invalide, rien n’a changé."}});
+render();
+</script>
+</body>
+</html>
